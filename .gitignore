@@ -1,0 +1,6 @@
+#folder for processing on Mac
+main.dSYM/*
+#folder with metadata
+Курсова\ робота/*
+#file while working wit MacOS
+.DS_Store
