@@ -4,3 +4,4 @@ main.dSYM/*
 Курсова\ робота/*
 #file while working wit MacOS
 .DS_Store
+**/node_modules

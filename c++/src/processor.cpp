@@ -106,8 +106,11 @@ void Processor::Set_Adjacency_Array_To_File(string File_Name)
 		}
 		if (i != this->tops - 1)File << endl;
 	}
+	File<<endl;
 	File.close();
 }
+
+
 
 void Processor::Get_The_Shortest_Path_Floida()
 {

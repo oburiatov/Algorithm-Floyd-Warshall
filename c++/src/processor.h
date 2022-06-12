@@ -22,16 +22,17 @@ public:
 	void Set_Adjacency_Array_To_File(string File_Name);
 
 	void Get_The_Shortest_Path_Floida();
-	void Get_The_Shortest_Path_Dantzig();
+
 	void Set_Top_From(int from);
 	void Set_Top_To(int to);
+
 	double** Adjacency_Array;
 	int tops = NULL;
 	int ribs = NULL;
+
     Algorithm_Floida* Floid = nullptr;
 
 	double iterFloida = 0;
-	double iterDantzig = 0;
 	int* path;
 	int path_counter = 0;
 
