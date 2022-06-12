@@ -21,13 +21,13 @@ public:
 	int* path;
 	int counter = 0;
 	double** Adjacency_Array;
-	double** Array_Of_Distance;//äëÿ Ôëîéäà
+	double** Array_Of_Distance;
 	int** Array_Of_History;
 	double iterFloida = 0;
 
 	void Create_Arrays_of_Distance_History();
-	void Processing();//àëãîðèòì Ôëîéäà
+	void Processing();
 	void Get_The_Shortest_Path();
-	void Set_Result_to_File();
+	void Set_ArrayOfDistance_to_File();
 	~Algorithm_Floida();
 };

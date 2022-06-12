@@ -13,9 +13,6 @@ using namespace std;
 class Processor;
 class Algorithm_Floida;
 
-
-
-
 void Processor::Create_Arrays()
 {
 	this->Adjacency_Array = new double* [this->tops];
@@ -49,8 +46,6 @@ void Processor::Set_Data_Array_From_File(string File_Name)
 		File >> weight;
 		this->Adjacency_Array[x - 1][y - 1] = weight;
 	}
-
-
 }
 
 void Processor::Set_Data_Adjacency_Array_From_File(string File_Name)
@@ -62,7 +57,6 @@ void Processor::Set_Data_Adjacency_Array_From_File(string File_Name)
 		double data;
 		Create_Arrays();
 		File >> this->ribs;
-
 		for (int i = 0; i < this->tops; i++)
 		{
 			for (int j = 0; j < this->tops; j++)
@@ -72,13 +66,6 @@ void Processor::Set_Data_Adjacency_Array_From_File(string File_Name)
 			}
 		}
 	}
-	//else
-	//{
-	//	MessageBox::Show("Äàííûå íå ñ÷èòàíû. Ïðîâåðüòå êîððåêòíîñòü íàçâàíèÿ ôàéëà", "Âíèìàíèå!");
-	//	return;
-	//}
-
-
 }
 
 void Processor::Set_Data_Array_By_Generating(int num)
@@ -102,12 +89,11 @@ void Processor::Set_Data_Array_By_Generating(int num)
 				this->Adjacency_Array[i][j] = rand() % 15 + 1;
 				this->ribs++;
 			}
-
 		}
 	}
 }
 
-void Processor::Set_Data_To_File(string File_Name)
+void Processor::Set_Adjacency_Array_To_File(string File_Name)
 {
 	ofstream File(File_Name);
 	File << this->tops << " ";
@@ -117,80 +103,11 @@ void Processor::Set_Data_To_File(string File_Name)
 		for (int j = 0; j < this->tops; j++)
 		{
 			File << setw(10) << this->Adjacency_Array[i][j];
-
 		}
 		if (i != this->tops - 1)File << endl;
 	}
-
 	File.close();
-	//MessageBox::Show("Äàííûå ñîõðàíåíû", "Âíèìàíèå!");
 }
-
-void Processor::Set_Path_To_File(string File_Name)
-{
-
-	ifstream From("Important/reserved_for_path.txt");
-	ofstream To(File_Name);
-	string temp;
-	while (!From.eof())
-	{
-		temp = "";
-		getline(From, temp);
-		To << temp << endl;
-	}
-}
-
-void Processor::Show_Graph()
-{
-	ofstream File("Important/picture.dot");
-	File << "  digraph g{" << endl;
-	File << "    dpi=\"600\";" << endl;
-	File << "    rankdir=\"LR\";" << endl;
-	File << "    splines=\"line\";" << endl;
-
-	for (int i = 0; i < this->tops; i++)
-	{
-		File << "    " << i + 1 << " [shape=\"circle\"label=\"" << i + 1 << "\"];" << endl;
-	}
-
-	for (int i = 0; i < tops; i++)
-	{
-		for (int j = 0; j < tops; j++)
-		{
-			if (this->Adjacency_Array[i][j] != INF && i != j && this->Adjacency_Array[i][j] != 0)
-			{
-				File << "    " << i + 1 << "->" << j + 1 << " [weight=1000 label=\"" << Adjacency_Array[i][j] << "\"];" << endl;
-			}
-		}
-	}
-	File << "  }";
-	File.close();
-	remove("Important/picture.png");
-	system("dot -Tpng -o Important/picture.png Important/picture.dot");
-}
-
-void Processor::Show_Path()
-{
-	ofstream File("Important/Path.dot");
-	File << "  digraph g{" << endl;
-	File << "    dpi=\"600\";" << endl;
-	File << "    rankdir=\"LR\";" << endl;
-	File << "    node[shape=circle, group=main];" << endl;
-
-
-	for (int i = 0; i < this->path_counter - 1; i++)
-	{
-		File << "    " << this->path[i] << "->" << this->path[i + 1] << " [label=\"" << Adjacency_Array[this->path[i] - 1][this->path[i + 1] - 1] << "\"];" << endl;
-	}
-	File << "  }";
-	File.close();
-	remove("Important/Path.png");
-	system("dot -Tpng -o Important/Path.png Important/Path.dot");
-	SetPathToFile("Important/reserved_for_path.txt");
-	delete[] this->path;
-
-}
-
 
 void Processor::Get_The_Shortest_Path_Floida()
 {
@@ -200,19 +117,10 @@ void Processor::Get_The_Shortest_Path_Floida()
 	Floid->Create_Arrays_of_Distance_History();
 	Floid->Processing();
 	Floid->Get_The_Shortest_Path();
-	Floid->Set_Result_to_File();
+	Floid->Set_ArrayOfDistance_to_File();
 	this->path_counter = Floid->counter;
 	this->iterFloida = Floid->iterFloida;
 	delete Floid;
-
-}
-
-
-
-bool Processor::is_INF(int row, int column)
-{
-	if (this->Adjacency_Array[row][column] == INF) return true;
-	else return false;
 }
 
 void Processor::Set_Top_From(int From)
@@ -228,19 +136,14 @@ void Processor::Set_Top_To(int To)
 void Processor::SetPathToFile(string File_Name)
 {
 	ofstream File(File_Name);
-	File << "=========Êðàò÷àéøèé ïóòü îò " << this->from << " ê " << this->to << " âåðøèíå==========" << endl << endl;
-
+	File << "=========The shortest path from " << this->from << " to " << this->to << ": " << endl << endl;
 
 	for (int i = 0; i < this->path_counter - 1; i++)
 	{
 		File << this->path[i] << "—>" << this->path[i + 1] << " = " << this->Adjacency_Array[this->path[i] - 1][this->path[i + 1] - 1] << endl;
 	}
 	File.close();
-
 }
-
-
-
 
 Processor::~Processor()
 {

@@ -21,27 +21,28 @@ int main(int argc, char *argv[])
 	string argv2 = argv[2];
 	string argv3 = argv[3];
 	string argv4 = argv[4];
-	cout<<argv1<<argv2;
 
-	// Processor proc;
+	Processor proc;
 
-	// proc.Set_Top_From(stoi(argv1));
-	// proc.Set_Top_To(stoi(argv2));
+	proc.Set_Top_From(stoi(argv1));
+	proc.Set_Top_To(stoi(argv2));
 
-	// if(argv3=="file")
-	// {
-	// 	proc.Set_Data_Array_From_File("data.txt");
-	// }
-	// else if(argv3=="gen")
-	// {
-	// 	proc.Set_Data_Array_By_Generating(stoi(argv4));
-	// }
+	if(argv3=="file")
+	{
+		proc.Set_Data_Array_From_File("example.txt");
+	}
+	else if(argv3=="gen")
+	{
+		proc.Set_Data_Array_By_Generating(stoi(argv4));
+		proc.Set_Adjacency_Array_To_File("adj_array.txt");
+	}
 		
-	// proc.Get_The_Shortest_Path_Floida();
-	//  for (int i = 0; i < proc.path_counter; i++)
-	//  {
-	//  	cout << proc.path[i] << endl;
-	//  }
+	proc.Get_The_Shortest_Path_Floida();
+	proc.SetPathToFile("result.txt");
+	 for (int i = 0; i < proc.path_counter; i++)
+	 {
+	 	cout << proc.path[i] << endl;
+	 }
 }
 
 

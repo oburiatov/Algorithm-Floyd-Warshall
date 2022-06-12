@@ -26,7 +26,6 @@ void Algorithm_Floida::Create_Arrays_of_Distance_History()
 {
 	this->Array_Of_History = new int* [this->tops]{};
 	this->Array_Of_Distance = new double* [this->tops]{};
-
 	for (int i = 0; i < this->tops; i++)
 	{
 		this->Array_Of_History[i] = new int[this->tops]{};
@@ -37,20 +36,15 @@ void Algorithm_Floida::Create_Arrays_of_Distance_History()
 		for (int j = 0; j < tops; j++)
 		{
 			if (i == j) {
-
 				this->Array_Of_Distance[i][j] = INF;
 			}
 			else
 			{
 				this->Array_Of_Distance[i][j] = this->Adjacency_Array[i][j];
 			}
-
 			if (this->Array_Of_Distance[i][j] != INF) this->Array_Of_History[i][j] = j + 1;
-
 		}
 	}
-
-
 }
 
 void Algorithm_Floida::Processing()
@@ -62,7 +56,7 @@ void Algorithm_Floida::Processing()
 			if (i == j)this->Array_Of_Distance[i][j] = 0;
 		}
 	}
-
+	
 	for (int i = 0; i < this->tops; i++)
 	{
 		this->iterFloida++;
@@ -81,12 +75,8 @@ void Algorithm_Floida::Processing()
 					}
 				}
 			}
-
 		}
 	}
-
-
-
 }
 
 void Algorithm_Floida::Get_The_Shortest_Path()
@@ -97,7 +87,6 @@ void Algorithm_Floida::Get_The_Shortest_Path()
 	{
 		this->path[this->counter++] = k;
 	}
-
 	while (k != 0)
 	{
 		k = Array_Of_History[k - 1][to - 1];
@@ -106,13 +95,12 @@ void Algorithm_Floida::Get_The_Shortest_Path()
 			this->path[this->counter++] = k;
 		}
 	}
-
 }
 
-void Algorithm_Floida::Set_Result_to_File()
+void Algorithm_Floida::Set_ArrayOfDistance_to_File()
 {
 	ofstream File("result.txt");
-	File << "=====Ìàòðèöÿ ðàññòîÿíèé=====" << endl << endl;
+	File << "=====Result=====" << endl << endl;
 	for (int i = 0; i < tops; i++)
 	{
 		for (int j = 0; j < tops; j++)
@@ -121,7 +109,6 @@ void Algorithm_Floida::Set_Result_to_File()
 		}
 		File << endl;
 	}
-
 	File.close();
 }
 
@@ -134,6 +121,4 @@ Algorithm_Floida::~Algorithm_Floida()
 	}
 	delete Array_Of_Distance;
 	delete Array_Of_History;
-	//Destructor
-
 }
