@@ -15,7 +15,7 @@ G.add_weighted_edges_from(
     ('C', 'G','4')]
     )
 G.add_edge("A","B",)
-G.add_weighted_edges_from()
+# G.add_weighted_edges_from()
 
 nx.set_edge_attributes(G, values = 300, name = 'weight')
 val_map = {'A': 0.4,
