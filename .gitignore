@@ -5,3 +5,4 @@ main.dSYM/*
 #file while working wit MacOS
 .DS_Store
 **/node_modules
+**/package-lock.json
