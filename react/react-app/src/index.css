@@ -59,7 +59,8 @@ code {
   background-color: rgba(0, 0, 0, 0.8);
   top: 0;
   left: 0;
-  /* visibility: hidden; */
+  visibility: hidden;
+  
  }
 
  .popup__body{
@@ -128,30 +129,6 @@ code {
   transform: scale(1);
 }
 
-/* #text__topsnum{
-  justify-content: center;
-  display: flex;
-  margin-right: 25px;
-}
-
-#field__topsnum{
-  justify-content: center;
-  display: block;
-  margin-right: 25px;
-} */
-
-
-/* #text__topfrom{
-  justify-content: center;
-  display: flex;
-  margin-right: 25px;
-}
-
-#text__topto{
-  justify-content: center;
-  display: flex;
-  margin-right: 25px;
-} */
 
 #run-button{
   margin-right: 25px;
@@ -162,4 +139,11 @@ code {
   border: 2px solid #f0f0f0;
   border-radius: 4px;
   width: 100%;
+}
+.no-focusborder:focus {
+  outline-style: none;
+  border-color: #f0f0f0;
+}
+#file-input{
+  display: none;
 }
