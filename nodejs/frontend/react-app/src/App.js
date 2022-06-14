@@ -61,9 +61,9 @@ function App() {
               <input type='text' id='field__topto' className='no-focusborder'
               onChange={(event) => isNumber(event)}></input>
             </div>
-            <input id="file-input" type="file" name="file" onChange={(event) => readURL(event)} multiple></input>
+            <input id="file-input" type="file" name="file" onChange={(event) => uploadFile(event)} multiple></input>
             <button className='side-bar-button' id='run-button'
-              onClick={() => processData()}
+              onClick={(event) => uploadData(event)}
               >Запустити програму</button>
             <button className='side-bar-button' 
               onClick={() => {
@@ -84,17 +84,7 @@ export default App;
 
 
 function processData(){
-  if(checkAllComponents()){
-    if(loadOption=="file"){
-      document.getElementById('file-input').click();
-      
-    }
 
-  }
-  else {
-    alert ("Дані введено некоректно. Перевірте!")
-    alert (loadOption)
-  }
 }
 
 function isNumber(event)
@@ -138,18 +128,56 @@ var validation = {
 }; 
 
 function checkAllComponents() {
-  if(topsNum!="NULL"&&topFrom!="NULL"&&topTo!="NULL"){return true}
-  else {return false}
+  if(topsNum!="NULL"&&topFrom!="NULL"&&topTo!="NULL"&& parseInt(topsNum)>=parseInt(topFrom)&&parseInt(topsNum)>=parseInt(topTo)&&parseInt(topFrom)!=parseInt(topTo)){
+    return true}
+  else {
+    return false}
 }
 
 
 
-function readURL(event) {
+
+function uploadData(event) {
   event.preventDefault();
+
+  if(checkAllComponents()){
+    if(loadOption=="file"){
+      document.getElementById('file-input').click();
+      upload_parameters();
+      const element= document.getElementById("popup");
+      element.style.visibility = "hidden";
+      alert("Дані завантажено!") 
+    }
+    else{
+      upload_parameters();
+      const element= document.getElementById("popup");
+      element.style.visibility = "hidden";
+      alert("Дані завантажено!")
+    }
+    
+
+  }
+  else {
+    alert ("Дані введено некоректно. Перевірте!")
+  }
+}
+
+
+function uploadFile(event){
   var inputId = event.target.id;
   const files = document.getElementById(inputId);
-
   const formData = new FormData()
   formData.append("file", files.files[0], files.files[0].name)
+  formData.append("topFrom", topFrom);
   axios.post("http://localhost:3001/upload_files", formData)
+}
+
+function upload_parameters(){
+  axios.post('http://localhost:3001/upload_parameters', {
+  "loadOption": loadOption,
+  "topFrom": topFrom,
+  "topTo": topTo,
+  "topsNum": topsNum
+  });
+
 }
