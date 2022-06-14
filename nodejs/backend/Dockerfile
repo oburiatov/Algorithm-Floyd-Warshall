@@ -28,5 +28,5 @@ RUN npm install --prefix app
 COPY --from=cpp /usr/src/cpp_main /app
 RUN apt-get update && apt-get install -y iputils-ping build-essential manpages-dev
 
-EXPOSE 30500
+EXPOSE 30501
 CMD ["npm", "run", "start", "--prefix", "app"]

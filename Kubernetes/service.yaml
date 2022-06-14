@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: task-manager
+  name: webapp-algorithm-floyd
   namespace: algorithm-floyd
 spec:
   type: NodePort
