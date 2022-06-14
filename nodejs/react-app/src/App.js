@@ -1,27 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import * as go from "gojs";
-import React, { Component } from "react";
-import { exec } from 'child_process';
+import axios from 'axios';
 
 let loadOption = "gen";
 let topFrom = "NULL";
 let topTo = "NULL";
 let topsNum = "NULL";
-
-
-// class Sidebar extends React.Component {
-//   state = {};
-//   hideWindow = () => {
-//     const element= document.getElementById("popup");
-//     if (element)
-//     {
-//       element.style.visibility = "hidden";
-//     }
-//   }
-
-// }
-
 
 function App() {
   return (
@@ -77,7 +61,7 @@ function App() {
               <input type='text' id='field__topto' className='no-focusborder'
               onChange={(event) => isNumber(event)}></input>
             </div>
-            <input id="file-input" type="file" name="name"></input>
+            <input id="file-input" type="file" name="file" onChange={(event) => readURL(event)} multiple></input>
             <button className='side-bar-button' id='run-button'
               onClick={() => processData()}
               >Запустити програму</button>
@@ -103,20 +87,9 @@ function processData(){
   if(checkAllComponents()){
     if(loadOption=="file"){
       document.getElementById('file-input').click();
+      
     }
 
-    const execSync = require('child_process').execSync;
-    execSync("ls -la", (error, stdout, stderr) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
   }
   else {
     alert ("Дані введено некоректно. Перевірте!")
@@ -167,4 +140,16 @@ var validation = {
 function checkAllComponents() {
   if(topsNum!="NULL"&&topFrom!="NULL"&&topTo!="NULL"){return true}
   else {return false}
+}
+
+
+
+function readURL(event) {
+  event.preventDefault();
+  var inputId = event.target.id;
+  const files = document.getElementById(inputId);
+
+  const formData = new FormData()
+  formData.append("file", files.files[0], files.files[0].name)
+  axios.post("http://localhost:3001/upload_files", formData)
 }
