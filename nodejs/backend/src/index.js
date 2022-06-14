@@ -33,7 +33,7 @@ function uploadFiles(req,  res) {
 
 function hello(){
     const { exec } = require('child_process');
-    exec('ls /', (err, stdout, stderr) => {
+    exec('./main 1 2 file hello', (err, stdout, stderr) => {
     if (err) {
         //some err occurred
         console.error(err)
