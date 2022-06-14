@@ -4,13 +4,12 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.static('public'));
 
-
 let loadOption = "gen";
 let topFrom = "NULL";
 let topTo = "NULL";
 let topsNum = "NULL";
 
-const PORT = 3001
+const PORT = 30500
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

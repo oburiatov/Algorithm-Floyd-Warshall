@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-algorithm-floyd
+  namespace: algorithm-floyd
+spec:
+  selector:
+    matchLabels:
+      app: webapp-algorithm-floyd
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp-algorithm-floyd
+    spec:
+      containers:
+        - name: webapp-algorithm-floyd-backend
+          image: oburiatov/algorithm-floyd-backend-js:0.4
+          imagePullPolicy: Always
+          ports:
+            - name: backend
+              containerPort: 30501
+        - name: webapp-algorithm-floyd-frontend
+          image: oburiatov/algorithm-floyd-frontend-js:0.4
+          imagePullPolicy: Always
+          ports:
+            - name: https
+              containerPort: 30500
+          volumeMounts:
+            - name: secret-volume-front
+              mountPath: /etc/nginx/certs/
+      volumes:
+        - name: secret-volume-front
+          secret:
+            secretName: devopseek.me-cert
