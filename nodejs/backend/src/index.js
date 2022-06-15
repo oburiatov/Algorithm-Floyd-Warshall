@@ -3,28 +3,28 @@ const app = express()
 const cors = require('cors');
 app.use(cors());
 app.use(express.static('public'));
-
-var fs = require('fs');
-var https = require('https');
-var privateKey  = fs.readFileSync('/app/ssl/devopseek.key', 'utf8');
-var certificate = fs.readFileSync('/app/ssl/devopseek.crt', 'utf8');
-var credentials = {key: privateKey, cert: certificate};
-var httpsServer = https.createServer(credentials, app);
-
-
 const PORT = 30501
-httpsServer.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-});
+
+
+// var fs = require('fs');
+// var https = require('https');
+// var privateKey  = fs.readFileSync('/app/ssl/devopseek.key', 'utf8');
+// var certificate = fs.readFileSync('/app/ssl/devopseek.crt', 'utf8');
+// var credentials = {key: privateKey, cert: certificate};
+// var httpsServer = https.createServer(credentials, app);
+
+// httpsServer.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`)
+// });
 
 let loadOption = "gen";
 let topFrom = "NULL";
 let topTo = "NULL";
 let topsNum = "NULL";
 
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`)
-// })
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+})
 
 const multer = require("multer");
 

@@ -167,11 +167,11 @@ function uploadFile(event){
   const formData = new FormData()
   formData.append("file", files.files[0], files.files[0].name)
   formData.append("topFrom", topFrom);
-  axios.post("https://devopseek.me:30501/upload_files", formData)
+  axios.post("http://localhost:30501/upload_files", formData)
 }
 
 function upload_parameters(){
-  axios.post('https://devopseek.me:30501/upload_parameters', {
+  axios.post('http://localhost:30501/upload_parameters', {
   "loadOption": loadOption,
   "topFrom": topFrom,
   "topTo": topTo,
