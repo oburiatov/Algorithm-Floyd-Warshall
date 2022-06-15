@@ -1,7 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
-import * as go from 'gojs';
 import * as d3 from 'd3';
 let loadOption = "gen";
 let topFrom = "NULL";
@@ -98,12 +97,11 @@ function processData(event){
   var height = svg.attr("height");
 
   var graphData = {
-    nodes: [{ name: "A" }, { name: "B" }, { name: "C" }, { name: "D" }],
+    nodes: [{ name: "A",fix: "123" }, { name: "B",fix: "123" }, { name: "C",fix: "123" }, { name: "D",fix: "123" }],
     links: [
       { source: "A", target: "B" },
       { source: "B", target: "C" },
       { source: "D", target: "C" }
-      
     ]
   };
 
@@ -113,19 +111,25 @@ function processData(event){
   .force("center", d3.forceCenter(width / 2, height / 2))
   .force("link", d3.forceLink(graphData.links).id(d => d.name))
   .force("link",d3.forceLink(graphData.links).distance(100))
+
   .on("tick", ticked);
+
+  let link = svg.selectAll(".linkLine").data(graphData.links);
+
 
   var links = svg
     .append("g")
     .selectAll("line")
     .data(graphData.links)
     .enter()
+    .append("g")
     .append("line")
     .attr("stroke-width", 3)
     .attr("height", 30)
     .style("stroke", "orange")
-    .text("Hello world")
     .attr('marker-start', "url(#arrow)")
+
+
     ;
 
   var drag = d3
@@ -134,7 +138,7 @@ function processData(event){
     .on("drag", dragged)
     .on("end", dragended);
 
-    svg.append("svg:defs").append("svg:marker")
+   let arrow= svg.append("svg:defs").append("svg:marker")
     .attr("id", "arrow")
     .attr("viewBox", "0 -5 10 10")
     .attr('refX', -93) //so that it comes towards the center.
@@ -142,8 +146,10 @@ function processData(event){
     .attr("markerHeight", 3)
     .attr("orient", "auto")
     .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5");
+    .attr("d", "M0,-5L10,0L0,5");    
 
+
+    
   var textsAndNodes = svg
     .append("g")
     .style("font", "10px times")
@@ -152,6 +158,8 @@ function processData(event){
     .enter()
     .append("g")
     .call(drag);
+
+
 
 
   var circles = textsAndNodes
@@ -163,11 +171,14 @@ function processData(event){
     return d.name;
   });
 
+ 
+  
   function ticked() {
     //translate(x, y)
     textsAndNodes.attr("transform", function(d) {
       return "translate(" + d.x + ", " + d.y + ")";
     });
+
 
     links
       .attr("x1", function(d) {
@@ -182,6 +193,7 @@ function processData(event){
       .attr("y2", function(d) {
         return d.target.y;
       });
+    
     console.log(simulation.alpha());
   }
 
