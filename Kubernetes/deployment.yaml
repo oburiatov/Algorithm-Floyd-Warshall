@@ -15,13 +15,16 @@ spec:
     spec:
       containers:
         - name: webapp-algorithm-floyd-backend
-          image: oburiatov/algorithm-floyd-backend-js:0.4
+          image: oburiatov/algorithm-floyd-backend-js:0.7ssl
           imagePullPolicy: Always
           ports:
             - name: backend
               containerPort: 30501
+          volumeMounts:
+            - name: secret-volume-back
+              mountPath: /app/ssl/
         - name: webapp-algorithm-floyd-frontend
-          image: oburiatov/algorithm-floyd-frontend-js:0.4
+          image: oburiatov/algorithm-floyd-frontend-js:0.6
           imagePullPolicy: Always
           ports:
             - name: https
@@ -31,5 +34,8 @@ spec:
               mountPath: /etc/nginx/certs/
       volumes:
         - name: secret-volume-front
+          secret:
+            secretName: devopseek.me-cert
+        - name: secret-volume-back
           secret:
             secretName: devopseek.me-cert
