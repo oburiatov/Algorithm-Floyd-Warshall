@@ -22,13 +22,16 @@ public:
 	void Set_Adjacency_Array_To_File(string File_Name);
 
 	void Get_The_Shortest_Path_Floida();
+	void Get_The_Shortest_Path_Paralleling_Floida();
 
 	void Set_Top_From(int from);
 	void Set_Top_To(int to);
+	void Set_Treads(int thread_num);
 
 	double** Adjacency_Array;
 	int tops = NULL;
 	int ribs = NULL;
+	int tread_num = 0;
 
     Algorithm_Floida* Floid = nullptr;
 

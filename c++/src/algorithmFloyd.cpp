@@ -5,13 +5,15 @@
 #include<string>
 #include<iomanip>
 #include"algorithmFloyd.h"
+#include"parallel.h"
 
 using namespace std;
 #define INF 1e9
 
+
 class Algorithm_Floida;
 
-Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array, int from, int to, int* path)
+Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array, int from, int to, int* path, int thread_count)
 {
 	this->tops = tops;
 	this->ribs = ribs;
@@ -19,6 +21,7 @@ Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array,
 	this->from = from;
 	this->to = to;
 	this->path = path;
+	this->thread_count=thread_count;
 
 }
 
@@ -110,6 +113,22 @@ void Algorithm_Floida::Set_ArrayOfDistance_to_File()
 		File << endl;
 	}
 	File.close();
+}
+
+
+void Algorithm_Floida::Get_The_Shortest_Path_Paralleling()
+{
+	for (int i = 0; i < tops; i++)
+    {
+        for (int j = 0; j < tops; j++)
+        {
+            cout<< this->Array_Of_Distance[i][j]<<"\t";
+        }
+        cout<<endl;
+        
+    }
+	Get_The_Shortest_Path_Parallel(this->tops, this->thread_count, this->Array_Of_Distance, this->Array_Of_History);
+
 }
 
 Algorithm_Floida::~Algorithm_Floida()

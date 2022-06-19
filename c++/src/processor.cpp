@@ -8,7 +8,7 @@
 #include"algorithmFloyd.h"
 
 using namespace std;
-#define INF 1e9
+#define INF 4294967295U
 
 class Processor;
 class Algorithm_Floida;
@@ -24,7 +24,7 @@ void Processor::Create_Arrays()
 	{
 		for (int j = 0; j < this->tops; j++)
 		{
-			this->Adjacency_Array[i][j] = INF;
+			this->Adjacency_Array[i][j] =  INF;
 		}
 	}
 }
@@ -109,6 +109,9 @@ void Processor::Set_Adjacency_Array_To_File(string File_Name)
 	File<<endl;
 	File.close();
 }
+void Processor::Set_Treads(int thread_num){
+	this->tread_num=thread_num;
+}
 
 
 
@@ -116,10 +119,23 @@ void Processor::Get_The_Shortest_Path_Floida()
 {
 	this->path = new int[this->tops]{};
 	this->path_counter = 0;
-	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path);
+	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path, this->tread_num);
 	Floid->Create_Arrays_of_Distance_History();
 	Floid->Processing();
 	Floid->Get_The_Shortest_Path();
+	Floid->Set_ArrayOfDistance_to_File();
+	this->path_counter = Floid->counter;
+	this->iterFloida = Floid->iterFloida;
+	delete Floid;
+}
+
+void Processor::Get_The_Shortest_Path_Paralleling_Floida()
+{
+	this->path = new int[this->tops]{};
+	this->path_counter = 0;
+	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path, this->tread_num);
+	Floid->Create_Arrays_of_Distance_History();
+	Floid->Get_The_Shortest_Path_Paralleling();
 	Floid->Set_ArrayOfDistance_to_File();
 	this->path_counter = Floid->counter;
 	this->iterFloida = Floid->iterFloida;
@@ -147,6 +163,7 @@ void Processor::SetPathToFile(string File_Name)
 	}
 	File.close();
 }
+
 
 Processor::~Processor()
 {
