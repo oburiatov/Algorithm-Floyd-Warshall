@@ -1,5 +1,5 @@
-#include<iostream>
 #include<ctime>
+#include<iostream>
 #include<vector>
 #include<fstream>
 #include<string>
@@ -12,61 +12,62 @@ typedef struct struct_wa struct_wa_t;
 
 struct struct_wa
 {
-    int starting_row; 
-    int ending_row; 
+    int row_start; 
+    int row_end; 
     int tops;
     double **Array_of_Distance; 
     int **Array_of_History;
-    int thread_count;
+    int thread_cnt;
     sem_t *sem_Array_of_Distance;
 };
 
 
-void Get_The_Shortest_Path_Parallel(int tops, int thread_count, double ** Array_of_Distance, int **Array_of_History)
+void Get_The_Shortest_Path_Parallel(int tops, int thread_cnt, double ** Array_of_Distance, int **Array_of_History)
 {
 
     sem_t *sem_Array_of_Distance = (sem_t *)calloc(tops + 1, sizeof(sem_t));
-    sem_init(sem_Array_of_Distance, 1, thread_count);
+
+    sem_init(sem_Array_of_Distance, 1, thread_cnt);
 
     for (int i = 1; i <= tops; i++)sem_init(sem_Array_of_Distance + i, 1, 0);
 
-    if (tops < thread_count) thread_count = tops;
+    if (tops < thread_cnt) thread_cnt = tops;
 
-    pthread_t *threads = (pthread_t *)calloc(thread_count, sizeof(pthread_t));
+    pthread_t *threads = (pthread_t *)calloc(thread_cnt, sizeof(pthread_t));
 
-    int thread_last_row = tops % thread_count;
-    int rows_per_thread = tops / thread_count;
-    int next_unassigned_row = 0;
+    int thread_last_row = tops % thread_cnt;
+    int rows_in_thread = tops / thread_cnt;
+    int next_unsigned_row = 0;
 
 
-    for (int i = 1; i < thread_count; i++)
+    for (int i = 1; i < thread_cnt; i++)
     {
-        struct_wa_t *wa = (struct_wa_t *)calloc(1, sizeof(struct_wa_t));
+        struct_wa_t *args = (struct_wa_t *)calloc(1, sizeof(struct_wa_t));
 
-        wa->Array_of_Distance = Array_of_Distance;
-        wa->Array_of_History= Array_of_History;
-        wa->tops = tops;
-        wa->sem_Array_of_Distance = sem_Array_of_Distance;
-        wa->thread_count = thread_count;
-        wa->starting_row = next_unassigned_row;
-        wa->ending_row = next_unassigned_row + rows_per_thread - 1;
+        args->Array_of_Distance = Array_of_Distance;
+        args->Array_of_History= Array_of_History;
+        args->tops = tops;
+        args->sem_Array_of_Distance = sem_Array_of_Distance;
+        args->thread_cnt = thread_cnt;
+        args->row_start = next_unsigned_row;
+        args->row_end = next_unsigned_row + rows_in_thread - 1;
             
-        if (i <= thread_last_row) wa->ending_row++;
+        if (i <= thread_last_row) args->row_end++;
 
-        next_unassigned_row = wa->ending_row + 1;
+        next_unsigned_row = args->row_end + 1;
 
-        if (pthread_create(threads + i, NULL, Floyd_Warshall_Coordinator,wa) != 0){
+        if (pthread_create(threads + i, NULL, Floyd_Warshall_Coordinator,args) != 0){
                     printf("floyd_warshall_parallel: error, could not"
                         " create a worker thread");
         }
 
-        if (next_unassigned_row >= tops)break;
+        if (next_unsigned_row >= tops)break;
     }
 
-    Get_The_Part_Of_Work(next_unassigned_row,
-                        next_unassigned_row + rows_per_thread - 1, sem_Array_of_Distance, tops, thread_count, Array_of_Distance, Array_of_History);
+    Get_The_Part_Of_Work(next_unsigned_row,
+                        next_unsigned_row + rows_in_thread - 1, sem_Array_of_Distance, tops, thread_cnt, Array_of_Distance, Array_of_History);
 
-    for (int i = 0; i < thread_count; i++)
+    for (int i = 0; i < thread_cnt; i++)
     {
         pthread_join(threads[i], NULL);
     }
@@ -74,30 +75,28 @@ void Get_The_Shortest_Path_Parallel(int tops, int thread_count, double ** Array_
 }
 
 
-void * Floyd_Warshall_Coordinator(void * args)
+void * Floyd_Warshall_Coordinator(void * data)
 {
-	struct_wa_t  * wa =(struct_wa_t  *)args; 
+	struct_wa_t  * args =(struct_wa_t  *)data; 
 
-    Get_The_Part_Of_Work(wa->starting_row, wa->ending_row, wa->sem_Array_of_Distance, wa->tops, wa->thread_count, wa->Array_of_Distance, wa->Array_of_History);
+    Get_The_Part_Of_Work(args->row_start, args->row_end, args->sem_Array_of_Distance, args->tops, args->thread_cnt, args->Array_of_Distance, args->Array_of_History);
     pthread_exit(NULL);
 	return NULL;
 }
 
 
-void Get_The_Part_Of_Work(int starting_row, int ending_row, sem_t *sem_Array_of_Distance, int tops, int thread_count, double** Array_Of_Distance, int** Array_Of_History)
+void Get_The_Part_Of_Work(int row_start, int row_end, sem_t *sem_Array_of_Distance, int tops, int thread_cnt, double** Array_Of_Distance, int** Array_Of_History)
 {
     for (int k = 0; k < tops; k++)
     {
         sem_wait((sem_Array_of_Distance + k));
 
-        for (int i = starting_row; i <= ending_row; i++)
+        for (int i = row_start; i <= row_end; i++)
         {
             for (int j = 0; j < tops; j++)
             {
-                if (Array_Of_Distance[i][k] == INF || Array_Of_Distance[k][j]== INF)
-                {
-                    continue;
-                }
+                if (Array_Of_Distance[i][k] == INF || Array_Of_Distance[k][j]== INF) continue;
+
                 if (Array_Of_Distance[i][j] > Array_Of_Distance[i][k] + Array_Of_Distance[k][j])
                 {
                     Array_Of_Distance[i][j] = Array_Of_Distance[i][k] + Array_Of_Distance[k][j];
@@ -105,9 +104,9 @@ void Get_The_Part_Of_Work(int starting_row, int ending_row, sem_t *sem_Array_of_
                 }
             }
 
-            if (k >= starting_row && k <= ending_row) 
+            if (k >= row_start && k <= row_end) 
             {
-                for (int z = 0; z < thread_count; z++)
+                for (int f = 0; f < thread_cnt; f++)
                 {
                     sem_post(sem_Array_of_Distance + k + 1);
                 }

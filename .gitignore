@@ -9,3 +9,5 @@ main.dSYM/*
 **/uploads/*
 **/.vscode
 **/.devcontainer
+**/.main
+**/.result.txt
