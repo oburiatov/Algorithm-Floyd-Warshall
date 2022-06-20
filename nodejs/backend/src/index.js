@@ -6,16 +6,16 @@ app.use(express.static('public'));
 const PORT = 30501
 
 
-// var fs = require('fs');
-// var https = require('https');
-// var privateKey  = fs.readFileSync('/app/ssl/devopseek.key', 'utf8');
-// var certificate = fs.readFileSync('/app/ssl/devopseek.crt', 'utf8');
-// var credentials = {key: privateKey, cert: certificate};
-// var httpsServer = https.createServer(credentials, app);
+var fs = require('fs');
+var https = require('https');
+var privateKey  = fs.readFileSync('/app/ssl/devopseek.key', 'utf8');
+var certificate = fs.readFileSync('/app/ssl/devopseek.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+var httpsServer = https.createServer(credentials, app);
 
-// httpsServer.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`)
-// });
+httpsServer.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+});
 
 let loadOption = "gen";
 let topFrom = "NULL";
@@ -23,9 +23,9 @@ let topTo = "NULL";
 let topsNum = "NULL";
 let programType = "NULL";
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`)
+// })
 
 const multer = require("multer");
 
@@ -65,7 +65,7 @@ app.post('/upload_parameters', (req, res) => {
 });
   
 
-function excecute(){
+function excecute(response){
     const { exec } = require('child_process');
     exec('./main '+ topFrom+' ' + topTo + ' ' + loadOption + ' ' + topsNum + ' ' + programType, (err, stdout, stderr) => {
     if (err) {
@@ -73,6 +73,7 @@ function excecute(){
     } else {
     console.log(`stdout: ${stdout}`);
     console.log(`stderr: ${stderr}`);
+    response.json({ message: "Successfully run program" })
     }
     });
 }
@@ -98,9 +99,8 @@ function wait(ms){
  }
 
 app.get('/run', (request, response) => {
-    // excecute()
-    // setTimeout(5000);
-    wait(7000)
-    response.json({ message: "Successfully run program" })
+    excecute(response)
+    // wait(7000)
+    // response.json({ message: "Successfully run program" })
     
 })

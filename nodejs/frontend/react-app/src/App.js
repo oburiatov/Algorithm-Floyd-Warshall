@@ -126,6 +126,9 @@ function processData(event, option) {
     else if(option=="result") {
       rawdata = jsonRes;
       links = JSON.parse(JSON.stringify(rawdata));
+      if(links.length==1){
+        alert("На жаль шляху до між заданими вершинами немає. Спробуйте ще раз!")
+      }
       document.getElementById("spentTimer").textContent = "Час роботи: "+links[links.length-1].time
     }
     
@@ -314,6 +317,7 @@ function uploadData(event, state) {
       upload_parameters();
       const element = document.getElementById("popup");
       element.style.visibility = "hidden";
+      wait(5000)
       clearVal()
       exec()
       
@@ -339,11 +343,11 @@ function uploadFile(event) {
   const formData = new FormData()
   formData.append("file", files.files[0], files.files[0].name)
   formData.append("topFrom", topFrom);
-  axios.post("http://localhost:30501/upload_files", formData)
+  axios.post("https://devopseek.me:30501/upload_files", formData)
 }
 
 function upload_parameters() {
-  axios.post('http://localhost:30501/upload_parameters', {
+  axios.post('https://devopseek.me:30501/upload_parameters', {
     "programType": programType,
     "loadOption": loadOption,
     "topFrom": topFrom,
@@ -355,7 +359,7 @@ function upload_parameters() {
 function download_data() {
   // const FileDownload = require('js-file-download');
   axios({
-    url: 'http://localhost:30501/download_data', 
+    url: 'https://devopseek.me:30501/download_data', 
     method: 'GET',
     responseType: 'json', 
 }).then((response) => {
@@ -366,7 +370,7 @@ function download_data() {
 function download_res() {
   // const FileDownload = require('js-file-download');
   axios({
-    url: 'http://localhost:30501/download_res', 
+    url: 'https://devopseek.me:30501/download_res', 
     method: 'GET',
     responseType: 'json', 
 }).then((response) => {
@@ -374,15 +378,24 @@ function download_res() {
 })
 }
 
+function wait(ms){
+  var start = new Date().getTime();
+  var end = start;
+  while(end < start + ms) {
+    end = new Date().getTime();
+ }
+}
+
 function exec() {
   const element = document.getElementById("popup-wait");
   element.style.visibility = "visible";
   // const FileDownload = require('js-file-download');
   axios({
-    url: 'http://localhost:30501/run', 
+    url: 'https://devopseek.me:30501/run', 
     method: 'GET',
     responseType: 'json', 
 }).then((response) => {
+  wait(8000)
   element.style.visibility = "hidden";
   alert("Програма відпрацювала успішно. Можете переглянути результат")
   download_data()
