@@ -48,10 +48,6 @@ void Algorithm_Floida::Create_Arrays_of_Distance_History()
 			if (this->Array_Of_Distance[i][j] != INF) this->Array_Of_History[i][j] = j + 1;
 		}
 	}
-}
-
-void Algorithm_Floida::Processing()
-{
 	for (int i = 0; i < tops; i++)
 	{
 		for (int j = 0; j < tops; j++)
@@ -59,7 +55,10 @@ void Algorithm_Floida::Processing()
 			if (i == j)this->Array_Of_Distance[i][j] = 0;
 		}
 	}
-	
+}
+
+void Algorithm_Floida::Processing()
+{
 	for (int i = 0; i < this->tops; i++)
 	{
 		this->iterFloida++;
@@ -84,6 +83,8 @@ void Algorithm_Floida::Processing()
 
 void Algorithm_Floida::Get_The_Shortest_Path()
 {
+
+
 	this->path[this->counter++] = this->from;
 	int k = Array_Of_History[this->from - 1][this->to - 1];
 	if (k != 0)
@@ -116,19 +117,9 @@ void Algorithm_Floida::Set_ArrayOfDistance_to_File()
 }
 
 
-void Algorithm_Floida::Get_The_Shortest_Path_Paralleling()
+void Algorithm_Floida::Processing_In_Parallel()
 {
-	for (int i = 0; i < tops; i++)
-    {
-        for (int j = 0; j < tops; j++)
-        {
-            cout<< this->Array_Of_Distance[i][j]<<"\t";
-        }
-        cout<<endl;
-        
-    }
 	Get_The_Shortest_Path_Parallel(this->tops, this->thread_count, this->Array_Of_Distance, this->Array_Of_History);
-
 }
 
 Algorithm_Floida::~Algorithm_Floida()

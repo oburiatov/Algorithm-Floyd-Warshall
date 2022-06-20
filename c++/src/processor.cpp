@@ -8,7 +8,7 @@
 #include"algorithmFloyd.h"
 
 using namespace std;
-#define INF 4294967295U
+#define INF 1e9
 
 class Processor;
 class Algorithm_Floida;
@@ -135,7 +135,8 @@ void Processor::Get_The_Shortest_Path_Paralleling_Floida()
 	this->path_counter = 0;
 	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path, this->tread_num);
 	Floid->Create_Arrays_of_Distance_History();
-	Floid->Get_The_Shortest_Path_Paralleling();
+	Floid->Processing_In_Parallel();
+	Floid->Get_The_Shortest_Path();
 	Floid->Set_ArrayOfDistance_to_File();
 	this->path_counter = Floid->counter;
 	this->iterFloida = Floid->iterFloida;

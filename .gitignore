@@ -7,3 +7,5 @@ main.dSYM/*
 **/node_modules
 **/package-lock.json
 **/uploads/*
+**/.vscode
+**/.devcontainer

@@ -27,13 +27,15 @@ public:
 	void Set_Top_From(int from);
 	void Set_Top_To(int to);
 	void Set_Treads(int thread_num);
+	Algorithm_Floida* Floid = nullptr;
+	void SetPathToFile(string File_Name);//reserved data
 
+
+private:
 	double** Adjacency_Array;
 	int tops = NULL;
 	int ribs = NULL;
 	int tread_num = 0;
-
-    Algorithm_Floida* Floid = nullptr;
 
 	double iterFloida = 0;
 	int* path;
@@ -41,5 +43,4 @@ public:
 
 	int from = NULL;
 	int to = NULL;
-	void SetPathToFile(string File_Name);//reserved data
 };

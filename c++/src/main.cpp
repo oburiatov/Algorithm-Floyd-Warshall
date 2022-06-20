@@ -40,28 +40,18 @@ int main(int argc, char *argv[])
 
 	proc.Set_Top_From(5);
 	proc.Set_Top_To(6);
-	proc.Set_Treads(3);
-	proc.Set_Data_Array_From_File("example.txt");
+	proc.Set_Treads(50);
+	// proc.Set_Data_Array_From_File("example.txt");
+	proc.Set_Data_Array_By_Generating(1000);
 	
 	proc.Get_The_Shortest_Path_Paralleling_Floida();
 	
 
-	//char *output_file = "output.txt";
-	// FILE * output = fopen(output_file, "w+");
-
-
-    // for (int i = 0; i < *dimension; i++) 
-    // {
-    //     for (int j = 0; j < *dimension; j++)
-    //     {
-    //         fprintf(output, "%u ", *(proc.Adjacency_Array + (i * *dimension) + j));
-    //     }
-    //     fprintf(output, "\n");
-    // }
-
 	// proc.Get_The_Shortest_Path_Floida();
+
 	proc.SetPathToFile("result.txt");
 	
+	// delete
 	//  for (int i = 0; i < proc.path_counter; i++)
 	//  {
 	//  	cout << proc.path[i] << endl;

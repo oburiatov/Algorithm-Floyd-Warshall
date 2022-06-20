@@ -8,15 +8,15 @@
 
 using namespace std;
 #define INF 1e9
-typedef struct worker_args worker_args_t;
+typedef struct struct_wa struct_wa_t;
 
-struct worker_args
+struct struct_wa
 {
     int starting_row; 
     int ending_row; 
-    int vertex_count;
-    double **dist_Array_of_Distance; 
-    int **dist_Array_of_History;
+    int tops;
+    double **Array_of_Distance; 
+    int **Array_of_History;
     int thread_count;
     sem_t *sem_Array_of_Distance;
 };
@@ -28,73 +28,44 @@ void Get_The_Shortest_Path_Parallel(int tops, int thread_count, double ** Array_
     sem_t *sem_Array_of_Distance = (sem_t *)calloc(tops + 1, sizeof(sem_t));
     sem_init(sem_Array_of_Distance, 1, thread_count);
 
-    for (int i = 1; i <= tops; i++)
-    {
-        sem_init(sem_Array_of_Distance + i, 1, 0);
-    }
-    if (tops < thread_count)
-    {
-        thread_count = tops;
-    }
+    for (int i = 1; i <= tops; i++)sem_init(sem_Array_of_Distance + i, 1, 0);
+
+    if (tops < thread_count) thread_count = tops;
 
     pthread_t *threads = (pthread_t *)calloc(thread_count, sizeof(pthread_t));
-    int rows_per_thread = tops / thread_count;
-    int threads_with_extra_row = tops % thread_count;
-    int next_unassigned_row = 0;
 
-    worker_args_t *wa = (worker_args_t *)calloc(1, sizeof(worker_args_t));    
-    wa->dist_Array_of_Distance = Array_of_Distance;
-    wa->dist_Array_of_History= Array_of_History;
-    cout<<"Array Of Distance"<<endl;
-    // for (int i = 0; i < tops; i++)
-    // {
-    //     for (int j = 0; j < tops; j++)
-    //     {
-    //         cout<< Array_of_Distance[i][j]<<"\t";
-    //     }
-    //     cout<<endl;
-        
-    // }
-    
-    wa->vertex_count = tops;
-    wa->sem_Array_of_Distance = sem_Array_of_Distance;
-    wa->thread_count = thread_count;
+    int thread_last_row = tops % thread_count;
+    int rows_per_thread = tops / thread_count;
+    int next_unassigned_row = 0;
 
 
     for (int i = 1; i < thread_count; i++)
     {
+        struct_wa_t *wa = (struct_wa_t *)calloc(1, sizeof(struct_wa_t));
 
-        
-        
+        wa->Array_of_Distance = Array_of_Distance;
+        wa->Array_of_History= Array_of_History;
+        wa->tops = tops;
+        wa->sem_Array_of_Distance = sem_Array_of_Distance;
+        wa->thread_count = thread_count;
         wa->starting_row = next_unassigned_row;
         wa->ending_row = next_unassigned_row + rows_per_thread - 1;
-        if (i <= threads_with_extra_row) 
-        {
-            wa->ending_row++;
-        }
+            
+        if (i <= thread_last_row) wa->ending_row++;
 
         next_unassigned_row = wa->ending_row + 1;
-		cout<<"!!!!!!!!starting "<< wa->starting_row<< " "<<wa->ending_row<<endl;
-        if (pthread_create(threads + i, NULL, floyd_warshall_worker,wa) != 0){
+
+        if (pthread_create(threads + i, NULL, Floyd_Warshall_Coordinator,wa) != 0){
                     printf("floyd_warshall_parallel: error, could not"
                         " create a worker thread");
         }
-        {
-            cout<<"I am in a parallel" <<endl;
-        }
 
-        if (next_unassigned_row >= tops)
-        {
-            break;
-        }
+        if (next_unassigned_row >= tops)break;
     }
 
-	cout<<"the last";
-    // Execute this thread's portion of the work
-    floyd_warshall_fractional(next_unassigned_row,
+    Get_The_Part_Of_Work(next_unassigned_row,
                         next_unassigned_row + rows_per_thread - 1, sem_Array_of_Distance, tops, thread_count, Array_of_Distance, Array_of_History);
 
-    // Rejoin other threads
     for (int i = 0; i < thread_count; i++)
     {
         pthread_join(threads[i], NULL);
@@ -103,51 +74,42 @@ void Get_The_Shortest_Path_Parallel(int tops, int thread_count, double ** Array_
 }
 
 
-void * floyd_warshall_worker(void * args)
+void * Floyd_Warshall_Coordinator(void * args)
 {
-	// worker_args &wa = *(static_cast<worker_args *>(args));
+	struct_wa_t  * wa =(struct_wa_t  *)args; 
 
-	worker_args_t  * wa =(worker_args_t  *)args; 
-    
-	cout<<"WORKERstarting "<< ((struct worker_args *)args)->starting_row<< " "<<wa->ending_row<<endl;
-
-    floyd_warshall_fractional(wa->starting_row, wa->ending_row, wa->sem_Array_of_Distance, wa->vertex_count, wa->thread_count, wa->dist_Array_of_Distance, wa->dist_Array_of_History);
+    Get_The_Part_Of_Work(wa->starting_row, wa->ending_row, wa->sem_Array_of_Distance, wa->tops, wa->thread_count, wa->Array_of_Distance, wa->Array_of_History);
     pthread_exit(NULL);
 	return NULL;
 }
 
 
-void floyd_warshall_fractional(int starting_row, int ending_row, sem_t *sem_Array_of_Distance, int tops, int thread_count, double** Array_Of_Distance, int** Array_Of_History)
+void Get_The_Part_Of_Work(int starting_row, int ending_row, sem_t *sem_Array_of_Distance, int tops, int thread_count, double** Array_Of_Distance, int** Array_Of_History)
 {
-	cout<< "starting ffffrow= "<< starting_row<<" ending= "<< ending_row<<endl;
-    for (int i = starting_row; i <= ending_row; i++)
+    for (int k = 0; k < tops; k++)
     {
-		cout<< "starting ffffrow= "<< starting_row<<" ending= "<< ending_row<<endl;
-        sem_wait((sem_Array_of_Distance + i));
+        sem_wait((sem_Array_of_Distance + k));
 
-        for (int j = 0; j < tops; j++)
+        for (int i = starting_row; i <= ending_row; i++)
         {
-            for (int k = 0; k < tops; k++)
+            for (int j = 0; j < tops; j++)
             {
-                if (Array_Of_Distance[i][j] == INF)
+                if (Array_Of_Distance[i][k] == INF || Array_Of_Distance[k][j]== INF)
                 {
-                    cout<<"Is INF!!"<<endl;
                     continue;
                 }
-                if (Array_Of_Distance[i][k] > Array_Of_Distance[i][j] + Array_Of_Distance[j][k])
+                if (Array_Of_Distance[i][j] > Array_Of_Distance[i][k] + Array_Of_Distance[k][j])
                 {
-                    cout<<"change pos"<<endl;
-                    Array_Of_Distance[i][k] = Array_Of_Distance[i][j] + Array_Of_Distance[j][k];
-                    Array_Of_History[i][k] = Array_Of_History[i][j];
-
+                    Array_Of_Distance[i][j] = Array_Of_Distance[i][k] + Array_Of_Distance[k][j];
+                    Array_Of_History[i][j] = Array_Of_History[i][k];
                 }
             }
 
-            if (i >= starting_row && i <= ending_row) 
+            if (k >= starting_row && k <= ending_row) 
             {
                 for (int z = 0; z < thread_count; z++)
                 {
-                    sem_post(sem_Array_of_Distance + i + 1);
+                    sem_post(sem_Array_of_Distance + k + 1);
                 }
             }
         }
