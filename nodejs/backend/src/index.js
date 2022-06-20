@@ -21,6 +21,7 @@ let loadOption = "gen";
 let topFrom = "NULL";
 let topTo = "NULL";
 let topsNum = "NULL";
+let programType = "NULL";
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
@@ -33,13 +34,14 @@ var storage = multer.diskStorage({
       cb(null, '.')
     },
     filename: function (req, file, cb) {
-        cb(null, "data.txt");
+        cb(null, "input.txt");
     }
   })
  
   
 var upload = multer({ storage: storage });
 app.post("/upload_files", upload.single("file"), uploadFiles);
+
 
 function uploadFiles(req,  res) {    
     res.json({ message: "Successfully uploaded files" });
@@ -51,21 +53,22 @@ app.post('/upload_parameters', (req, res) => {
       data += chunk;
     });
     req.on('end', () => {
+        programType=JSON.parse(data).programType;
         loadOption=JSON.parse(data).loadOption;
         topsNum=JSON.parse(data).topsNum;
         topFrom=JSON.parse(data).topFrom;
         topTo=JSON.parse(data).topTo;
         console.log("Data parameters loaded");
+        console.log(programType)
         res.end();
     });  
 });
   
 
-function hello(){
+function excecute(){
     const { exec } = require('child_process');
-    exec('./main '+ topFrom+' ' + topTo + ' ' + loadOption + ' ' + topsNum, (err, stdout, stderr) => {
+    exec('./main '+ topFrom+' ' + topTo + ' ' + loadOption + ' ' + topsNum + ' ' + programType, (err, stdout, stderr) => {
     if (err) {
-        //some err occurred
         console.error(err)
     } else {
     console.log(`stdout: ${stdout}`);
@@ -74,8 +77,30 @@ function hello(){
     });
 }
 
-app.get('/result', (request, response) => {
-    hello()
-    response.send()
+app.get('/download_data', (request, response) => {
+
+    response.sendFile(__dirname+"/data.json")
+    console.log("graph was successfully downloaded")
 })
 
+app.get('/download_res', (request, response) => {
+
+    response.sendFile(__dirname+"/result.json")
+    console.log("result was successfully downloaded")
+})
+
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
+
+app.get('/run', (request, response) => {
+    // excecute()
+    // setTimeout(5000);
+    wait(7000)
+    response.json({ message: "Successfully run program" })
+    
+})

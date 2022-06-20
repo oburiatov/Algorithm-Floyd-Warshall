@@ -28,7 +28,7 @@ public:
 	void Set_Top_To(int to);
 	void Set_Treads(int thread_num);
 	Algorithm_Floida* Floid = nullptr;
-	void SetPathToFile(string File_Name);//reserved data
+	void SetPathToFile(string data, string result);//reserved data
 
 
 private:
@@ -43,4 +43,6 @@ private:
 
 	int from = NULL;
 	int to = NULL;
+	timeval startTime,endTime;
+	double spentTime = 0.0;
 };

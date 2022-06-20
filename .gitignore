@@ -7,7 +7,11 @@ main.dSYM/*
 **/node_modules
 **/package-lock.json
 **/uploads/*
-**/.vscode
+**/.vscode/*
 **/.devcontainer
-**/.main
+**/main
 **/.result.txt
+.vscode/settings.json
+**/data.json
+**/result.json
+c++/src/main

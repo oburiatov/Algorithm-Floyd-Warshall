@@ -12,14 +12,17 @@ ENV RUN_OPT=$RUN_OPT_def
 ARG TOPS_OPT_def=150
 ENV TOPS_OPT=$TOPS_OPT_def
 
+ARG PRLL_OPT_def=150
+ENV PRLL_OPT=$PRLL_OPT_def
+
 COPY ./src/. /usr/src/cpp_main
 WORKDIR /usr/src/cpp_main
 
-RUN g++ algorithmFloyd.cpp processor.cpp main.cpp -o main
+RUN g++ -pthread algorithmFloyd.cpp processor.cpp main.cpp parallel.cpp -o main
 
 FROM ubuntu:18.04
 COPY --from=cpp /usr/src/cpp_main /opt/cpp
 RUN apt-get update && apt-get install -y iputils-ping build-essential manpages-dev
 CMD ["ping","1.1.1.1"]
 
-#ENTRYPOINT ./main $START_FROM $END_WITH $RUN_OPT $TOPS_OPT
+#ENTRYPOINT ./main $START_FROM $END_WITH $RUN_OPT $TOPS_OPT $PRLL_OPT
