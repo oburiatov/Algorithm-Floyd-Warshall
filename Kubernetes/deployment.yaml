@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: webapp-algorithm-floyd-backend
-          image: oburiatov/algorithm-floyd-backend-js:0.7ssl
+          image: oburiatov/algorithm-floyd-backend-js:0.17
           imagePullPolicy: Always
           ports:
             - name: backend
@@ -24,7 +24,7 @@ spec:
             - name: secret-volume-back
               mountPath: /app/ssl/
         - name: webapp-algorithm-floyd-frontend
-          image: oburiatov/algorithm-floyd-frontend-js:0.6
+          image: oburiatov/algorithm-floyd-frontend-js:0.9
           imagePullPolicy: Always
           ports:
             - name: https

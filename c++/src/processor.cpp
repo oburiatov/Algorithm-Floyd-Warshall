@@ -6,6 +6,7 @@
 #include<iomanip>
 #include"processor.h"
 #include"algorithmFloyd.h"
+#include<sys/time.h>
 
 using namespace std;
 #define INF 1e9
@@ -24,7 +25,7 @@ void Processor::Create_Arrays()
 	{
 		for (int j = 0; j < this->tops; j++)
 		{
-			this->Adjacency_Array[i][j] = INF;
+			this->Adjacency_Array[i][j] =  INF;
 		}
 	}
 }
@@ -74,20 +75,24 @@ void Processor::Set_Data_Array_By_Generating(int num)
 	this->Adjacency_Array = new double* [tops];
 	Create_Arrays();
 	srand(time(NULL));
+	int a=0;
 	for (int i = 0; i < num; i++)
 	{
 		for (int j = 0; j < num; j++)
 		{
-			if (i != j)
+			if (i != j&& (Adjacency_Array[j][i]==0 || Adjacency_Array[j][i]==INF))
 			{
-				int a = rand() % 4;
-				if (a == 0)
+				a = rand() % 5;
+				if (a != 0)
 				{
 					this->Adjacency_Array[i][j] = INF;
 					continue;
 				}
+				else {
 				this->Adjacency_Array[i][j] = rand() % 15 + 1;
 				this->ribs++;
+				}
+
 			}
 		}
 	}
@@ -109,6 +114,9 @@ void Processor::Set_Adjacency_Array_To_File(string File_Name)
 	File<<endl;
 	File.close();
 }
+void Processor::Set_Treads(int thread_num){
+	this->tread_num=thread_num;
+}
 
 
 
@@ -116,9 +124,31 @@ void Processor::Get_The_Shortest_Path_Floida()
 {
 	this->path = new int[this->tops]{};
 	this->path_counter = 0;
-	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path);
+	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path, this->tread_num);
 	Floid->Create_Arrays_of_Distance_History();
+	gettimeofday(&this->startTime,0);
 	Floid->Processing();
+	gettimeofday(&this->endTime, 0);
+	this->spentTime=1000000*(this->endTime.tv_sec - this->startTime.tv_sec)+ (this->endTime.tv_usec - this->startTime.tv_usec);
+	this->spentTime/=1000000;
+	Floid->Get_The_Shortest_Path();
+	Floid->Set_ArrayOfDistance_to_File();
+	this->path_counter = Floid->counter;
+	this->iterFloida = Floid->iterFloida;
+	delete Floid;
+}
+
+void Processor::Get_The_Shortest_Path_Paralleling_Floida()
+{
+	this->path = new int[this->tops]{};
+	this->path_counter = 0;
+	this->Floid = new Algorithm_Floida(this->tops, this->ribs, this->Adjacency_Array, this->from, this->to, this->path, this->tread_num);
+	Floid->Create_Arrays_of_Distance_History();
+	gettimeofday(&this->startTime,0);
+	Floid->Processing_In_Parallel();
+	gettimeofday(&this->endTime, 0);
+	this->spentTime=1000000*(this->endTime.tv_sec - this->startTime.tv_sec)+ (this->endTime.tv_usec - this->startTime.tv_usec);
+	this->spentTime/=1000000;
 	Floid->Get_The_Shortest_Path();
 	Floid->Set_ArrayOfDistance_to_File();
 	this->path_counter = Floid->counter;
@@ -136,16 +166,35 @@ void Processor::Set_Top_To(int To)
 	this->to = To;
 }
 
-void Processor::SetPathToFile(string File_Name)
+void Processor::SetPathToFile(string data, string result)
 {
-	ofstream File(File_Name);
-	File << "=========The shortest path from " << this->from << " to " << this->to << ": " << endl << endl;
+	ofstream File(data);
+	File<<"[";
+	for (int i = 0; i < tops; i++)
+	{	
+		for (int j = 0; j < tops; j++)
+		{
+			if(Adjacency_Array[i][j]!=0 &&Adjacency_Array[i][j]!=INF)
+			{
+				File<<"{\"source\": \""<<i+1<<"\", \"target\": \""<<j+1<<"\", \"value\": \""<<Adjacency_Array[i][j]<<"\", \"color\": \"black"<<"\" },";
+			}
+		}
+		
+	}
+	File<<"{}";
+	File<<"]"<<endl;
+	File.close();
 
+	ofstream res(result);
+	res<<"[";
+	
 	for (int i = 0; i < this->path_counter - 1; i++)
 	{
-		File << this->path[i] << "—>" << this->path[i + 1] << " = " << this->Adjacency_Array[this->path[i] - 1][this->path[i + 1] - 1] << endl;
+		res<<"{\"source\": \""<<this->path[i]<<"\", \"target\": \""<<this->path[i + 1]<<"\", \"value\": \""<<this->Adjacency_Array[this->path[i] - 1][this->path[i + 1] - 1]<<"\", \"color\": \"red"<<"\" },";
 	}
-	File.close();
+	res<<"{\"time\": \""<<this->spentTime<<"\" }";
+	res<<"]"<<endl;
+	res.close();
 }
 
 Processor::~Processor()

@@ -5,13 +5,15 @@
 #include<string>
 #include<iomanip>
 #include"algorithmFloyd.h"
+#include"parallel.h"
 
 using namespace std;
 #define INF 1e9
 
+
 class Algorithm_Floida;
 
-Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array, int from, int to, int* path)
+Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array, int from, int to, int* path, int thread_count)
 {
 	this->tops = tops;
 	this->ribs = ribs;
@@ -19,6 +21,7 @@ Algorithm_Floida::Algorithm_Floida(int tops, int ribs, double** Adjacency_Array,
 	this->from = from;
 	this->to = to;
 	this->path = path;
+	this->thread_count=thread_count;
 
 }
 
@@ -45,10 +48,6 @@ void Algorithm_Floida::Create_Arrays_of_Distance_History()
 			if (this->Array_Of_Distance[i][j] != INF) this->Array_Of_History[i][j] = j + 1;
 		}
 	}
-}
-
-void Algorithm_Floida::Processing()
-{
 	for (int i = 0; i < tops; i++)
 	{
 		for (int j = 0; j < tops; j++)
@@ -56,7 +55,10 @@ void Algorithm_Floida::Processing()
 			if (i == j)this->Array_Of_Distance[i][j] = 0;
 		}
 	}
-	
+}
+
+void Algorithm_Floida::Processing()
+{
 	for (int i = 0; i < this->tops; i++)
 	{
 		this->iterFloida++;
@@ -81,6 +83,8 @@ void Algorithm_Floida::Processing()
 
 void Algorithm_Floida::Get_The_Shortest_Path()
 {
+
+
 	this->path[this->counter++] = this->from;
 	int k = Array_Of_History[this->from - 1][this->to - 1];
 	if (k != 0)
@@ -110,6 +114,12 @@ void Algorithm_Floida::Set_ArrayOfDistance_to_File()
 		File << endl;
 	}
 	File.close();
+}
+
+
+void Algorithm_Floida::Processing_In_Parallel()
+{
+	Get_The_Shortest_Path_Parallel(this->tops, this->thread_count, this->Array_Of_Distance, this->Array_Of_History);
 }
 
 Algorithm_Floida::~Algorithm_Floida()

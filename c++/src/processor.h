@@ -22,15 +22,20 @@ public:
 	void Set_Adjacency_Array_To_File(string File_Name);
 
 	void Get_The_Shortest_Path_Floida();
+	void Get_The_Shortest_Path_Paralleling_Floida();
 
 	void Set_Top_From(int from);
 	void Set_Top_To(int to);
+	void Set_Treads(int thread_num);
+	Algorithm_Floida* Floid = nullptr;
+	void SetPathToFile(string data, string result);//reserved data
 
+
+private:
 	double** Adjacency_Array;
 	int tops = NULL;
 	int ribs = NULL;
-
-    Algorithm_Floida* Floid = nullptr;
+	int tread_num = 0;
 
 	double iterFloida = 0;
 	int* path;
@@ -38,5 +43,6 @@ public:
 
 	int from = NULL;
 	int to = NULL;
-	void SetPathToFile(string File_Name);//reserved data
+	timeval startTime,endTime;
+	double spentTime = 0.0;
 };

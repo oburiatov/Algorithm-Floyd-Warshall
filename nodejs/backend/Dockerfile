@@ -15,7 +15,7 @@ ENV TOPS_OPT=$TOPS_OPT_def
 COPY c++/src/. /usr/src/cpp_main
 WORKDIR /usr/src/cpp_main
 
-RUN g++ algorithmFloyd.cpp processor.cpp main.cpp -o main
+RUN g++ -pthread algorithmFloyd.cpp processor.cpp main.cpp parallel.cpp -o main
 
 
 FROM sitespeedio/node:ubuntu-20.04-nodejs-14.15.0 AS build
