@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 		proc.Set_Data_Array_By_Generating(stoi(argv4));
 		proc.Set_Adjacency_Array_To_File("adj_array.txt");
 	}
-	proc.Set_Treads(50);
+	proc.Set_Treads(25);
 	if(argv5=="parallel")
 	{
 		proc.Get_The_Shortest_Path_Paralleling_Floida();

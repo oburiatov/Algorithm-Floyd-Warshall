@@ -57,8 +57,7 @@ void Get_The_Shortest_Path_Parallel(int tops, int thread_cnt, double ** Array_of
         next_unsigned_row = args->row_end + 1;
 
         if (pthread_create(threads + i, NULL, Floyd_Warshall_Coordinator,args) != 0){
-                    printf("floyd_warshall_parallel: error, could not"
-                        " create a worker thread");
+            exit;
         }
 
         if (next_unsigned_row >= tops)break;
