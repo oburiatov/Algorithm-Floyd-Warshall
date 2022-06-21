@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import * as d3 from 'd3';
+import { interpolateCubehelixLong } from 'd3';
 
 let loadOption = "gen";
 let topFrom = "NULL";
@@ -112,7 +113,7 @@ function clearSVGField() {
 
 function processData(event, option) {
   clearSVGField();
-  if(jsonData=="NULL"||jsonRes=="NULL")
+  if(topTo=="NULL")
   {
     alert("Ви не завантажили дані!")
   }
@@ -311,15 +312,16 @@ function uploadData(event, state) {
   event.preventDefault();
 
   if (checkAllComponents()) {
+    const element = document.getElementById("popup");
+    element.style.visibility = "hidden";
+    const element2 = document.getElementById("popup-wait");
+    element2.style.visibility = "visible";
     if (loadOption == "file") {
       document.getElementById('file-input').click();
       programType = state;
       upload_parameters();
-      const element = document.getElementById("popup");
-      element.style.visibility = "hidden";
-      wait(5000)
+      get_data()
       clearVal()
-      exec()
       
     }
     else {
@@ -327,8 +329,8 @@ function uploadData(event, state) {
       upload_parameters();
       const element = document.getElementById("popup");
       element.style.visibility = "hidden";
+      get_data()
       clearVal()
-      exec()
     }
   }
   else {
@@ -395,11 +397,27 @@ function exec() {
     method: 'GET',
     responseType: 'json', 
 }).then((response) => {
+  download_data()
+  download_res()
   wait(8000)
   element.style.visibility = "hidden";
   alert("Програма відпрацювала успішно. Можете переглянути результат")
-  download_data()
-  download_res()
+
   console.log(response.data)
   })
+}
+
+
+
+function get_data() {
+  const element = document.getElementById("popup-wait");
+  // element.style.visibility = "visible";
+  wait(8000)
+  download_data()
+  download_res()
+  wait(5000)
+  element.style.visibility = "hidden";
+  alert("Програма відпрацювала успішно. Можете переглянути результат")
+
+
 }

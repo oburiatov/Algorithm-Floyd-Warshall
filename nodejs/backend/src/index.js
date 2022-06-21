@@ -59,13 +59,14 @@ app.post('/upload_parameters', (req, res) => {
         topFrom=JSON.parse(data).topFrom;
         topTo=JSON.parse(data).topTo;
         console.log("Data parameters loaded");
-        console.log(programType)
+        excecute()
         res.end();
     });  
+    
 });
   
 
-function excecute(response){
+function excecute(){
     const { exec } = require('child_process');
     exec('./main '+ topFrom+' ' + topTo + ' ' + loadOption + ' ' + topsNum + ' ' + programType, (err, stdout, stderr) => {
     if (err) {
@@ -73,7 +74,6 @@ function excecute(response){
     } else {
     console.log(`stdout: ${stdout}`);
     console.log(`stderr: ${stderr}`);
-    response.json({ message: "Successfully run program" })
     }
     });
 }
@@ -101,6 +101,6 @@ function wait(ms){
 app.get('/run', (request, response) => {
     excecute(response)
     // wait(7000)
-    // response.json({ message: "Successfully run program" })
+    response.json({ message: "Successfully run program" })
     
 })
