@@ -25,4 +25,4 @@ COPY --from=cpp /usr/src/cpp_main /opt/cpp
 RUN apt-get update && apt-get install -y iputils-ping build-essential manpages-dev
 CMD ["ping","1.1.1.1"]
 
-#ENTRYPOINT ./main $START_FROM $END_WITH $RUN_OPT $TOPS_OPT $PRLL_OPT
+ENTRYPOINT ./main $START_FROM $END_WITH $RUN_OPT $TOPS_OPT $PRLL_OPT
